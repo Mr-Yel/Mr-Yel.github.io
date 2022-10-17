@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>禁止调试</title>
+	</head>
+	<body></body>
+	<script>
+		//debug调试时跳转页面
+	</script>
+	<script type="text/javascript">
+		var element = new Image();
+		Object.defineProperty(element, "id", {
+			get: function () {
+				window.location.href = "https://www.baidu.com";
+			},
+		});
+		console.log(element);
+		setInterval(function () {
+			check();
+		}, 2000);
+		var check = function () {
+			let timer = null;
+			function doCheck(a) {
+				console.log(a);
+				if (("" + a / a)["length"] !== 1 || a % 20 === 0) {
+					(function () {}["constructor"]("debugger")());
+				} else {
+					(function () {}["constructor"]("debugger")());
+				}
+				doCheck(++a);
+			}
+			try {
+				doCheck(0);
+			} catch (err) {}
+		};
+		check();
+
+		// // <!-- 禁用右键（防止右键查看源代码）-->
+		// window.oncontextmenu = function () {
+		// 	return false;
+		// };
+		// // <!--禁止任何键盘敲击事件（防止F12和shift+ctrl+i调起开发者工具）-->
+		// window.onkeydown =
+		// 	window.onkeyup =
+		// 	window.onkeypress =
+		// 		function () {
+		// 			window.event.returnValue = false;
+		// 			return false;
+		// 		};
+		// // <!-- 如果用户在工具栏调起开发者工具，那么判断浏览器的可视高度和可视宽度是否有改变，如有改变则关闭本页面 -->
+		// var h = window.innerHeight,
+		// 	w = window.innerWidth;
+		// window.onresize = function () {
+		// 	if (h != window.innerHeight || w != window.innerWidth) {
+		// 		debugger;
+		// 		alert("达咩，不可以。");
+		// 		// window.close();
+		// 		window.location = "about:blank";
+		// 	}
+		// };
+	</script>
+</html>

@@ -1,194 +1,174 @@
 <!DOCTYPE html>
 <html lang="cn">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script type="text/javascript" src="./asecct/xlsx.core.min.js"></script>
-    <style>
-      .tableLine {
-        height: 30px;
-      }
-      .header {
-        padding-bottom: 30px;
-      }
-      span {
-        display: inline-block;
-        text-align: center;
-        width: 100px;
-        border: 1px solid black;
-      }
-    </style>
-  </head>
-  <div class="header">
-    <button class="exportExcel">导出excel</button>
-    <label id="realBtn" class="lqwvje-btn">
-      <input type="file" id="testFile" hidden="hidden" />
-      上传文件
-    </label>
-  </div>
-  <body>
-    <script>
-      onload = () => {};
-    </script>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<script type="text/javascript" src="./asecct/xlsx.core.min.js"></script>
+		<script type="text/javascript" src="./until/nameStore.js"></script>
+		<script type="text/javascript" src="./until/minix.js"></script>
+		<style>
+			.tableLine {
+				height: 30px;
+			}
+			.header {
+				padding-bottom: 30px;
+			}
+			span {
+				display: inline-block;
+				text-align: center;
+				width: 100px;
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+	<div class="header">
+		<button class="exportExcel">导出excel</button>
+		<label id="realBtn" class="lqwvje-btn">
+			<input type="file" id="testFile" hidden="hidden" multiple />
+			上传文件
+		</label>
+	</div>
+	<body>
+		<script type="text/javascript">
+			onload = () => {
+				const nameStore = new NameStore();
+				const exportBottom = document.querySelector(".exportExcel");
+				exportBottom.addEventListener("click", exportExcel);
+				const loadFileBottom = document.querySelector("#testFile");
+				loadFileBottom.addEventListener("change", importExcel);
 
-    <script type="text/javascript">
-      class NameStore {
-        constructor() {
-          this.id = 0;
-          this.ids = {};
-        }
-        setName(name) {
-          this.ids[this.id] = name;
-          this.id++;
-        }
-        getID(name) {
-          return this.getObjectKey(this.ids, name);
-        }
-        getNameArr() {
-          return this.ids;
-        }
-        /**
-         * 通过对象值来寻找键(key)
-         * @param {Object} object 查找的值
-         * @param {*} value 需要寻找的键
-         * @returns 对象中查找到的key
-         */
-        getObjectKey(object, value) {
-          return Object.keys(object).find((key) => object[key] == value);
-        }
-      }
-      onload = () => {
-        const nameStore = new NameStore();
-        const exportBottom = document.querySelector(".exportExcel");
-        exportBottom.addEventListener("click", exportExcel);
-        const loadFileBottom = document.querySelector("#testFile");
-        loadFileBottom.addEventListener("change", fileChange);
+				const excelDataArr = [];
 
-        let hasFile = false;
+				let hasFile = false;
 
-        // 导出 Excel 文件
-        function exportExcel() {
-          if (!hasFile) return alert("请先上传文件");
-          // 格式化参数
-          const data = exportDate.map((item) => {
-            const newItem = {};
-            Object.keys(item).forEach((key) => {
-              newItem[excelKeyToName[key]] = item[key];
-            });
-            return newItem;
-          });
+				// 导出 Excel 文件
+				function exportExcel() {
+					if (!hasFile) return alert("请先上传文件");
+					// 格式化参数
+					const data = exportDate.map(item => {
+						const newItem = {};
+						Object.keys(item).forEach(key => {
+							newItem[excelKeyToName[key]] = item[key];
+						});
+						return newItem;
+					});
 
-          // 导出 Excel
-          json2Excel(data);
-        }
+					// 导出 Excel
+					json2Excel(data);
+				}
 
-        function json2Excel(
-          data,
-          sheetName = "sheetName",
-          fileName = "fileName"
-        ) {
-          fileName = fileName + ".xlsx";
-          const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
+				function json2Excel(
+					data,
+					sheetName = "sheetName",
+					fileName = "fileName"
+				) {
+					fileName = fileName + ".xlsx";
+					const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
 
-          const workBook = {
-            SheetNames: [sheetName], // 指定有序 sheet 的 name
-            Sheets: {
-              [sheetName]: jsonWorkSheet, // 表格数据内容
-            },
-          };
+					const workBook = {
+						SheetNames: [sheetName], // 指定有序 sheet 的 name
+						Sheets: {
+							[sheetName]: jsonWorkSheet, // 表格数据内容
+						},
+					};
 
-          return XLSX.writeFile(workBook, fileName); // 向文件系统写出文件
-        }
+					return XLSX.writeFile(workBook, fileName); // 向文件系统写出文件
+				}
 
-        function fileChange() {
-          //获取到选中的文件
-          var file = document.querySelector("#testFile").files[0];
-          if (file.size > 1024 * 1024) {
-            alert(
-              "当前文件大小:" +
-                Math.floor(file.size / 1024) +
-                "KB,上传文件不能大于1024KB"
-            );
-            return false;
-          }
-          var type = file.name.split(".");
-          if (
-            type[type.length - 1] !== "xlsx" &&
-            type[type.length - 1] !== "xls"
-          ) {
-            alert("只能选择excel文件导入");
-            return false;
-          }
-          const reader = new FileReader();
-          reader.readAsBinaryString(file);
-          reader.onload = function (e) {
-            const data = e.target.result;
-            const zzexcel = window.XLSX.read(data, {
-              type: "binary",
-            });
-            let result = [];
-            for (let i = 0; i < zzexcel.SheetNames.length; i++) {
-              const newData = window.XLSX.utils.sheet_to_json(
-                zzexcel.Sheets[zzexcel.SheetNames[i]]
-              );
-              result = excelDataToJson(newData);
-            }
-            console.log(result);
-            console.log(nameStore.getNameArr());
-            window.exportDate = result;
-            window.excelKeyToName = nameStore.getNameArr();
-            newTable();
-            hasFile = true;
-          };
-        }
+				//获取到选中的文件
+				function importExcel() {
+					var file = document.querySelector("#testFile").files[0];
+					console.log(document.querySelector("#testFile").files);
+					const files = document.querySelector("#testFile").files;
 
-        function newTable() {
-          exportDate.forEach((item) => {
-            const tableLine = document.createElement("div");
-            tableLine.className = "tableLine";
-            Object.keys(item).forEach((key) => {
-              const node = document.createElement("span");
-              node.innerHTML = `${item[key]}`;
-              tableLine.appendChild(node);
-            });
-            document.querySelector("body").appendChild(tableLine);
-          });
-        }
-        // 标准化 JSON 数据
-        function excelDataToJson(sheetJson) {
-          if (!sheetJson.length) return;
+					// 文件格式校验
+					if (!filesVerification(files)) return;
 
-          let result = sheetJson;
-          const hasTableHead = !!sheetJson[0].__EMPTY;
+					files.forEach(file => {
+						const reader = new FileReader();
+						reader.readAsBinaryString(file);
+						reader.onload = function (e) {
+							const data = e.target.result;
+							const zzexcel = window.XLSX.read(data, {
+								type: "binary",
+							});
+							let result = [];
+							for (
+								let i = 0;
+								i < zzexcel.SheetNames.length;
+								i++
+							) {
+								console.log(
+									zzexcel.Sheets[zzexcel.SheetNames[i]]
+								);
+								console.log(
+									window.XLSX.utils.sheet_to_json(
+										zzexcel.Sheets[zzexcel.SheetNames[i]]
+									)
+								);
+								const newData = window.XLSX.utils.sheet_to_json(
+									zzexcel.Sheets[zzexcel.SheetNames[i]]
+								);
+								console.log("newData", newData);
+								result = excelDataToJson(newData);
+							}
+							console.log(result);
+							console.log(nameStore.getNameArr());
+							window.exportDate = result;
+							window.excelKeyToName = nameStore.getNameArr();
+							newTable();
+							hasFile = true;
+						};
+					});
+				}
 
-          // 拥有表头的数据，需要取正确的值
-          if (hasTableHead) {
-            const header = sheetJson.shift();
-            const data = [];
-            Object.keys(header).forEach((key) => {
-              sheetJson.forEach((item, index) => {
-                const obj = data[index] || {};
-                obj[header[key]] = item[key];
-                data[index] = obj;
-              });
-            });
-            result = data;
-          }
-          const excelData = [];
-          // 将表格对应的文字转换为 key
-          result.forEach((item) => {
-            const newItem = {};
-            Object.keys(item).forEach((key) => {
-              nameStore.setName(key);
-              newItem[nameStore.getID(key)] = item[key];
-            });
-            excelData.push(newItem);
-          });
-          return excelData;
-        }
-      };
-    </script>
-  </body>
+				function newTable() {
+					exportDate.forEach(item => {
+						const tableLine = document.createElement("div");
+						tableLine.className = "tableLine";
+						Object.keys(item).forEach(key => {
+							const node = document.createElement("span");
+							node.innerHTML = `${item[key]}`;
+							tableLine.appendChild(node);
+						});
+						document.querySelector("body").appendChild(tableLine);
+					});
+				}
+				// 标准化 JSON 数据
+				function excelDataToJson(sheetJson) {
+					if (!sheetJson.length) return;
+
+					let result = sheetJson;
+					const hasTableHead = !!sheetJson[0].__EMPTY;
+
+					// 拥有表头的数据，需要取正确的值
+					if (hasTableHead) {
+						const header = sheetJson.shift();
+						const data = [];
+						Object.keys(header).forEach(key => {
+							sheetJson.forEach((item, index) => {
+								const obj = data[index] || {};
+								obj[header[key]] = item[key];
+								data[index] = obj;
+							});
+						});
+						result = data;
+					}
+					const excelData = [];
+					// 将表格对应的文字转换为 key
+					result.forEach(item => {
+						const newItem = {};
+						Object.keys(item).forEach(key => {
+							nameStore.setName(key);
+							newItem[nameStore.getID(key)] = item[key];
+						});
+						excelData.push(newItem);
+					});
+					return excelData;
+				}
+			};
+		</script>
+	</body>
 </html>
