@@ -3,7 +3,7 @@ function filesVerification (files) {
   if (files.length == 0) return true
   for (let file of files) {
 
-    if(file.size){
+    if(!file.size){
       console.log('can not fond "file.size"');
       return false;
     }
@@ -17,7 +17,7 @@ function filesVerification (files) {
       return false;
     }
 
-    if(file.name){
+    if(!file.name){
       console.log('can not fond "file.name"');
       return false;
     }
@@ -31,4 +31,5 @@ function filesVerification (files) {
       return false;
     }
   }
+  return true
 }
