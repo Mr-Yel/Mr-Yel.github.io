@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>识图</title>
+	</head>
+	<link rel="stylesheet" href="./main.css" />
+	<body>
+		<div class="ORC">
+			<select id="langsel" onchange="changeLang(event)">
+				<option value='eng'     selected>         English                </option>
+				<option value='chi_sim' > 中文        </option>
+				<option value='chi_tra' >         繁體中文    </option>
+			</select>
+			<input type="file" id="text" onchange="fileChange(event)" />
+			<!-- <label for="text"></label> -->
+			<div class="test">
+				<label
+					for="text"
+					ondragenter="dragenter(event)"
+					ondragover="dragover(event)"
+					ondragleave="dragleave(event)"
+					ondrop="drop(event)"
+				></label>
+			</div>
+			<div class="arrow"></div>
+			<textarea style="resize: none;" class="text"></textarea>
+		</div>
+	</body>
+	<script src="./untils/tesseract.min.js"></script>
+	<script
+		type="text/javascript"
+		src="../../plugin/my-tool-box/hxk-tool-box.umd.js"
+	></script>
+	<script>
+		// 禁用双击放大
+		var lastTouchEnd = 0;
+		document.documentElement.addEventListener('touchend', function (event) {
+			var now = Date.now();
+			if (now - lastTouchEnd <= 300) {
+				event.preventDefault();
+			}
+			lastTouchEnd = now;
+		}, {
+			passive: false
+		});
+
+		let lang = document.querySelector('#langsel').value
+
+		function changeLang(e) {
+			lang = e.target.value
+		}
+
+		let loading = new hxkToolBox.Loading();
+		const { createWorker } = Tesseract;
+
+		function dragover(ev) {
+			ev.preventDefault();
+		}
+		function dragenter(ev) {}
+		function dragleave(ev) {}
+
+		async function drop(ev) {
+			ev.preventDefault();
+			var file = ev.dataTransfer.files[0]; //得到文件
+			let text = await fileAnalysis(file);
+			changeText(text);
+		}
+
+		// 浏览器复制黏贴
+		document.body.oncopy = e => {
+			console.log(e);
+			console.log("我是body上的复制事件");
+		};
+		document.body.oncut = e => {
+			console.log(e);
+			console.log("我是body上的剪切事件");
+		};
+		document.body.onpaste = async e => {
+			console.log(e);
+			console.log("我是body上的黏贴事件");
+			var file = e.clipboardData.files[0]; //得到文件
+			let text = await fileAnalysis(file);
+			changeText(text);
+		};
+
+		async function fileChange(ev) {
+			console.log(ev);
+			var file = ev.target.files[0]; //得到文件
+			let text = await fileAnalysis(file);
+			changeText(text);
+		}
+
+		async function fileAnalysis(file) {
+			return new Promise(resolve => {
+				const fileReader = new FileReader();
+				fileReader.readAsDataURL(file); //将file读为url
+				fileReader.onload = async function (e) {
+					let text = await addMask(fileReader);
+					resolve(text);
+				};
+			});
+		}
+
+		async function addMask(fileReader) {
+			loading.showLoading();
+			let text = await ORC(fileReader.result);
+			loading.hideLoading();
+			return text;
+		}
+
+		function ORC(file) {
+			return new Promise(resolve => {
+				console.log(lang);
+				const worker = createWorker({
+					logger: m => console.log(m),
+					 //配置本地资源路径，语言包的实际位置是通过langPath+'/'+lang+'.traineddata.gz'得到的，所以不要改语言包文件名
+					langPath: './untils'
+				});
+				(async () => {
+					try {
+						await worker.load();
+						await worker.loadLanguage(lang);
+						await worker.initialize(lang);
+						const {
+							data: { text },
+						} = await worker.recognize(file);
+						await worker.terminate();
+						resolve(text);
+					} catch (error) {
+						alert(error)
+						loading.hideLoading();
+					}
+					
+				})();
+			});
+		}
+
+		function changeText(str) {
+			let textNode = document.querySelector('.text')
+			textNode && (textNode.value = str)
+		}
+
+	</script>
+</html>
