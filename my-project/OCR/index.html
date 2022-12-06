@@ -29,7 +29,7 @@
 			<textarea style="resize: none;" class="text"></textarea>
 		</div>
 	</body>
-	<script src="./untils/tesseract.min.js"></script>
+	<script src="./untils/tesseract.min.js?a=2"></script>
 	<script
 		type="text/javascript"
 		src="../../plugin/my-tool-box/hxk-tool-box.umd.js"
@@ -117,7 +117,7 @@
 				const worker = createWorker({
 					logger: m => console.log(m),
 					 //配置本地资源路径，语言包的实际位置是通过langPath+'/'+lang+'.traineddata.gz'得到的，所以不要改语言包文件名
-					langPath: 'https://mr-yel.github.io/my-project/OCR/untils'
+					langPath: './untils'
 				});
 				(async () => {
 					try {
@@ -142,6 +142,30 @@
 			let textNode = document.querySelector('.text')
 			textNode && (textNode.value = str)
 		}
+
+
+
+		const exampleImage = 'https://tesseract.projectnaptha.com/img/eng_bw.png';
+
+    const worker = Tesseract.createWorker({
+      logger: m => console.log(m)
+    });
+    Tesseract.setLogging(true);
+    work();
+
+    async function work() {
+      await worker.load();
+      await worker.loadLanguage('eng');
+      await worker.initialize('eng');
+
+      let result = await worker.detect(exampleImage);
+      console.log(result.data);
+
+      result = await worker.recognize(exampleImage);
+      console.log(result.data);
+
+      await worker.terminate();
+    }
 
 	</script>
 </html>
