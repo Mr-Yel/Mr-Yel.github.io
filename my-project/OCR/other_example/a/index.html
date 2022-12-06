@@ -1,46 +1,52 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Basic Usage</title>
-    </head>
-    <body>
-        <img id=myimg src="https://pic2.zhimg.com/v2-006fef9c4fe657c148b7b25a83a1a792_1440w.jpg?source=172ae18b" style="max-width: 40%;" />
-        <br>
- 
-        <p id="print"></p>
- 
- 
-        <script src="tesseract.min.js"></script>
-        <script src="worker.min.js"></script>
-        <script>    
-        var myimg = document.getElementById('myimg');           
-            const exampleImage = myimg.src; 
- 
-            const worker = Tesseract.createWorker({
-                workerPath: "worker.min.js",
-                langPath: "",
-                corePath: "tesseract-core.wasm.js",
-                logger: m => console.log(m)
-            });
-            Tesseract.setLogging(true);
-            work();
- 
-            async function work() {
-                await worker.load();
-                await worker.loadLanguage('chi_sim');
-                await worker.initialize('chi_sim');
- 
-                result = await worker.recognize(exampleImage);
-                console.log(result.data);
-                document.getElementById("print")
-                        .innerHTML = result.data.text;
- 
-                await worker.terminate();
-            }
-        </script>
-    </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+		/>
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Basic Usage</title>
+	</head>
+	<body>
+		<img
+			id="myimg"
+			src="https://pic2.zhimg.com/v2-006fef9c4fe657c148b7b25a83a1a792_1440w.jpg?source=172ae18b"
+			style="max-width: 40%"
+		/>
+		<br />
+
+		<p id="print"></p>
+	</body>
+	<!-- <script src="./tesseract.min.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/tesseract.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/worker.min.js"></script>
+	<!-- <script src="./worker.min.js"></script> -->
+	<script src="./tesseract-core.wasm.js"></script>
+	<script>
+		var myimg = document.getElementById("myimg");
+		const exampleImage = myimg.src;
+
+		const worker = Tesseract.createWorker({
+			workerPath: "worker.min.js",
+			langPath: "./",
+			corePath: "tesseract-core.wasm.js",
+			logger: m => console.log(m),
+		});
+		Tesseract.setLogging(true);
+		work();
+
+		async function work() {
+			await worker.load();
+			await worker.loadLanguage("chi_sim");
+			await worker.initialize("chi_sim");
+
+			let result = await worker.recognize(exampleImage);
+			console.log(result.data);
+			document.getElementById("print").innerHTML = result.data.text;
+
+			await worker.terminate();
+		}
+	</script>
 </html>

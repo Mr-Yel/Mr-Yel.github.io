@@ -10,9 +10,9 @@
 	<body>
 		<div class="ORC">
 			<select id="langsel" onchange="changeLang(event)">
-				<option value='eng'     selected>         English                </option>
-				<option value='chi_sim' > 中文        </option>
-				<option value='chi_tra' >         繁體中文    </option>
+				<option value="eng" selected>English</option>
+				<option value="chi_sim">中文</option>
+				<option value="chi_tra">繁體中文</option>
 			</select>
 			<input type="file" id="text" onchange="fileChange(event)" />
 			<!-- <label for="text"></label> -->
@@ -26,10 +26,12 @@
 				></label>
 			</div>
 			<div class="arrow"></div>
-			<textarea style="resize: none;" class="text"></textarea>
+			<textarea style="resize: none" class="text"></textarea>
 		</div>
 	</body>
-	<script src="./untils/tesseract.min.js?a=2"></script>
+	<!-- <script src="./untils/tesseract.min.js?a=2"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/tesseract.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/worker.min.js"></script>
 	<script
 		type="text/javascript"
 		src="../../plugin/my-tool-box/hxk-tool-box.umd.js"
@@ -37,20 +39,24 @@
 	<script>
 		// 禁用双击放大
 		var lastTouchEnd = 0;
-		document.documentElement.addEventListener('touchend', function (event) {
-			var now = Date.now();
-			if (now - lastTouchEnd <= 300) {
-				event.preventDefault();
+		document.documentElement.addEventListener(
+			"touchend",
+			function (event) {
+				var now = Date.now();
+				if (now - lastTouchEnd <= 300) {
+					event.preventDefault();
+				}
+				lastTouchEnd = now;
+			},
+			{
+				passive: false,
 			}
-			lastTouchEnd = now;
-		}, {
-			passive: false
-		});
+		);
 
-		let lang = document.querySelector('#langsel').value
+		let lang = document.querySelector("#langsel").value;
 
 		function changeLang(e) {
-			lang = e.target.value
+			lang = e.target.value;
 		}
 
 		let loading = new hxkToolBox.Loading();
@@ -116,8 +122,8 @@
 				console.log(lang);
 				const worker = createWorker({
 					logger: m => console.log(m),
-					 //配置本地资源路径，语言包的实际位置是通过langPath+'/'+lang+'.traineddata.gz'得到的，所以不要改语言包文件名
-					langPath: './untils'
+					//配置本地资源路径，语言包的实际位置是通过langPath+'/'+lang+'.traineddata.gz'得到的，所以不要改语言包文件名
+					langPath: "./untils",
 				});
 				(async () => {
 					try {
@@ -130,42 +136,42 @@
 						await worker.terminate();
 						resolve(text);
 					} catch (error) {
-						alert(error)
+						alert(error);
 						loading.hideLoading();
 					}
-					
 				})();
 			});
 		}
 
 		function changeText(str) {
-			let textNode = document.querySelector('.text')
-			textNode && (textNode.value = str)
+			let textNode = document.querySelector(".text");
+			textNode && (textNode.value = str);
 		}
 
+		const exampleImage =
+			"https://tesseract.projectnaptha.com/img/eng_bw.png";
 
+		const worker = Tesseract.createWorker({
+			logger: m => console.log(m),
+			workerPath: "https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/worker.min.js",
+			langPath: "./untils",
+			// corePath: "tesseract-core.wasm.js",
+		});
+		Tesseract.setLogging(true);
+		work();
 
-		const exampleImage = 'https://tesseract.projectnaptha.com/img/eng_bw.png';
+		async function work() {
+			await worker.load();
+			await worker.loadLanguage("eng");
+			await worker.initialize("eng");
 
-    const worker = Tesseract.createWorker({
-      logger: m => console.log(m)
-    });
-    Tesseract.setLogging(true);
-    work();
+			let result = await worker.detect(exampleImage);
+			console.log(result.data);
 
-    async function work() {
-      await worker.load();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
+			result = await worker.recognize(exampleImage);
+			console.log(result.data);
 
-      let result = await worker.detect(exampleImage);
-      console.log(result.data);
-
-      result = await worker.recognize(exampleImage);
-      console.log(result.data);
-
-      await worker.terminate();
-    }
-
+			await worker.terminate();
+		}
 	</script>
 </html>
