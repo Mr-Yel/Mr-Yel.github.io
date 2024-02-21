@@ -1,0 +1,216 @@
+/*Genshin font*/
+@font-face {
+	font-family: GenshinFont;
+	src: url("fonts/GenshinFont.woff2");
+}
+
+*{
+	font-family: GenshinFont;
+}
+
+html {
+	background-image: url(../images/bg.jpeg);
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+/*about dialog*/
+#about_window_box {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(64, 64, 64, 0.5);
+	z-index: 10;
+}
+#about_botton {
+	width: 22px;
+	height: 22px;
+	background-image: url(../images/ui/statement_default.png);
+	border: 0px;
+	border-radius: 50%;
+	background-size: cover;
+	margin-bottom: 9.5px;
+}
+#about_botton:hover {
+	background-image: url(../images/ui/statement_hover.png);
+}
+#about_botton:active {
+	background-image: url(../images/ui/statement_pressed.png);
+}
+.about_text {
+	vertical-align: top;
+	margin-top: 12.5px; 
+	margin-right: 15px;
+	font-size: 12px;
+}
+#exit_about_window:hover {
+	background-image: url(../images/ui/exit_hover.png);
+}
+#exit_about_window:active {
+	background-image: url(../images/ui/exit_pressed.png);
+}
+
+.lt { text-decoration: line-through; }
+
+
+#site-top {
+	top: 0;
+}
+
+#site-top>.left {
+	position: absolute;
+	left: 0px;
+}
+
+#site-top>.right {
+	position: absolute;
+	right: 0px;
+}
+
+.right>div {
+	display: inline-block;
+}
+
+
+#pianoKeyPanel {
+	position: absolute;
+	bottom: 0px;
+	transform: translate(-50%, -10%);
+}
+
+.row-1, .row-2, .row-3 {
+	position: relative;
+	display: inline-block;
+	justify-content: center;
+	align-items: center;
+}
+
+/*谱号*/
+#g-clef, #c-clef, #f-clef {
+	display: inline-block;
+	background-size: cover;
+}
+#g-clef {
+	background-image: url(../images/G_Clef.svg);
+}
+#c-clef {
+	background-image: url(../images/C_Clef.svg);
+}
+#f-clef {
+	background-image: url(../images/F_Clef.svg);
+}
+
+/*琴键底下的线*/
+.line {
+	z-index: -20;
+	position: absolute;
+}
+
+.line>div {
+	border-top: solid rgba(255, 255, 255, 0.5) 1.5px;
+}
+
+/*.line>hr {
+	height: 1px;
+	background-color: #fff;
+	border: none;
+}*/
+
+.pianoKeyContainer {
+	position: relative;
+	display: inline-block;
+	justify-content: center;
+	align-items: center;
+}
+
+.pianoKeyDownActive {
+	animation: pianoKeyDownAnimation 0.5s ease-out 1;
+}
+
+.pianoKeyCircle {
+	z-index: -10;
+	position: absolute;
+	border: 1px solid rgba(90, 250, 230, 0.5);
+	box-shadow: 0 0 5px #5AFAE6 inset;
+	border-radius: 50%;
+	opacity: 0;
+}
+
+.pianoKeyCircleActive {
+	animation: pianoKeyCircleAnimation 1.5s ease-out 1;
+}
+
+.pianoKey {
+	display: inline-block;
+	border: 0px;
+	border-radius: 50%;
+	background-size: cover;
+}
+
+@keyframes pianoKeyDownAnimation{
+	0% {
+		transform: scale(1);
+		filter: none;
+	}
+	50% {
+		transform: scale(0.9);
+		filter: brightness(80%);
+	}
+	100% {
+		transform: scale(1);
+		filter: none;
+	}
+}
+
+@keyframes pianoKeyCircleAnimation {
+	0% {
+		transform: scale(1);
+		opacity: 0;
+	}
+	50% {
+		transform: scale(1.4);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1.4);
+		opacity: 0;
+	}
+}
+
+/*全屏/退出全屏 按钮*/
+#FullScreen {
+	width: 40px;
+	height: 40px;
+	background-image: url(../images/ui/full_screen_default.png);
+	border: 0px;
+	border-radius: 50%;
+	background-size: cover;
+}
+#FullScreen:hover {
+	background-image: url(../images/ui/full_screen_hover.png);
+}
+#FullScreen:active {
+	background-image: url(../images/ui/full_screen_pressed.png);
+}
+
+#ExitFullScreen {
+	width: 40px;
+	height: 40px;
+	background-image: url(../images/ui/exit_full_screen_default.png);
+	border: 0px;
+	border-radius: 50%;
+	background-size: cover;
+}
+#ExitFullScreen:hover {
+	background-image: url(../images/ui/exit_full_screen_hover.png);
+}
+#ExitFullScreen:active {
+	background-image: url(../images/ui/exit_full_screen_pressed.png);
+}

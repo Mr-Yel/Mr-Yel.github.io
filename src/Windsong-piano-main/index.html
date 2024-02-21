@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<title>原神 - 风物之诗琴Web Edition</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css" />
+	<link rel="stylesheet" type="text/css" href="css/media.css" />
+	<link rel="stylesheet" type="text/css" href="css/genshin_ui.css" />
+</head>
+<body>
+	<div id="about_window_box" style="display: none;">
+		<!--
+		media.css
+			dialog-size: Set dialog size.
+		genshin_ui.css
+			fixed-center: Elements center.
+			genshin-dialog-bright: Genshin dialog for bright style.
+			genshin-dialog-dark: Genshin dialog for dark style.
+		-->
+		<div class="fixed-center genshin-dialog-bright dialog-size">
+			<div class="dialog-title">
+				声明
+			</div>
+			<div class="dialog-body">
+				原神 - 风物之诗琴Web Edition<br />
+				Debug<br />
+				<div id="debug"></div>
+				<script type="text/javascript">
+					debug();
+					function debug() {
+						document.getElementById("debug").innerHTML="逻辑分辨率" + window.screen.width + "*" + window.screen.height;
+						setTimeout('debug()', 500);
+					}
+					
+				</script>
+			</div>
+			<div class="dialog-footer">
+				<div id="exit_about_window" class="genshin-bt-dark-confirm">确认</div>
+			</div>
+		</div>
+	</div>
+	<div id="site-top">
+		<div class="left">
+		</div>
+		<div class="right">
+			<div id="about_botton"></div>
+			<div class="about_text" style="color: #fff;">声明</div>
+			<div id="FullScreen"></div>
+			<div id="ExitFullScreen" style="display: none;"></div>
+		</div>
+	</div>
+	<div id="pianoKeyPanel">
+		<div class="row-1">
+			<div class="line">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="g-clef"></div>
+		</div>
+		<div class="row-2">
+			<div class="line">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="c-clef"></div>
+		</div>
+		<div class="row-3">
+			<div class="line">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+			<div id="f-clef"></div>
+		</div>
+	</div>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+</body>
+</html>
